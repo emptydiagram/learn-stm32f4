@@ -33,14 +33,13 @@
 #define RCC_BASE 		(AHB1_BASE + RCC_AHB1_OFF)
 
 #define GPIOA_MODER_OFF (0x0UL)
-#define REG_GPIOA_MODER	(* (volatile unsigned int *) (GPIO_BASE + GPIOA_MODER_OFF))
+#define REG_GPIOA_MODER	(* (volatile unsigned int *) (GPIOA_BASE + GPIOA_MODER_OFF))
 
 #define GPIOA_ODR_OFF 	(0x14UL)
-#define REG_GPIOA_ODR	(* (volatile unsigned int *) (GPIO_BASE + GPIOA_ODR_OFF))
+#define REG_GPIOA_ODR	(* (volatile unsigned int *) (GPIOA_BASE + GPIOA_ODR_OFF))
 
 #define RCC_AHB1ENR_OFF (0x30UL)
 #define REG_RCC_AHB1ENR (* (volatile unsigned int *) (RCC_BASE + RCC_AHB1ENR_OFF))
-
 
 //// Masks
 // mask for bit 0 of RCC_AHB1ENR register
@@ -51,5 +50,18 @@
 #define USER_LED_PIN	PIN5
 
 int main(void) {
-    return 0;
+    // 1. enable clock access to GPIO A
+	//  - MODER,
+	REG_RCC_AHB1ENR |= GPIOAEN;
+
+	// 2. set PA5 as output pin
+	REG_GPIOA_MODER |= (1UL<<10);
+	REG_GPIOA_MODER &= ~(1UL<<11);
+
+	// 3. inside loop, toggle LED pin
+	while (1) {
+		REG_GPIOA_ODR |= USER_LED_PIN;
+
+	}
+
 }
