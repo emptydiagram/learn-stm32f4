@@ -49,6 +49,8 @@
 #define PIN5 			(1UL << 5)
 #define USER_LED_PIN	PIN5
 
+#define COUNT_SIZE		(200000)
+
 int main(void) {
     // 1. enable clock access to GPIO A
 	//  - MODER,
@@ -59,9 +61,19 @@ int main(void) {
 	REG_GPIOA_MODER &= ~(1UL<<11);
 
 	// 3. inside loop, toggle LED pin
+
 	while (1) {
+		for (int i = 0; i < 1*COUNT_SIZE; i++);
 		REG_GPIOA_ODR |= USER_LED_PIN;
-
+		for (int i = 0; i < 6*COUNT_SIZE; i++);
+		REG_GPIOA_ODR &= ~(USER_LED_PIN);
+		for (int i = 0; i < 5*COUNT_SIZE; i++);
+		REG_GPIOA_ODR |= USER_LED_PIN;
+		for (int i = 0; i < 4*COUNT_SIZE; i++);
+		REG_GPIOA_ODR &= ~(USER_LED_PIN);
+		for (int i = 0; i < 3*COUNT_SIZE; i++);
+		REG_GPIOA_ODR |= USER_LED_PIN;
+		for (int i = 0; i < 2*COUNT_SIZE; i++);
+		REG_GPIOA_ODR &= ~(USER_LED_PIN);
 	}
-
 }
