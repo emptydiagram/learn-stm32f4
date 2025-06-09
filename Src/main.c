@@ -49,7 +49,14 @@
 #define PIN5 			(1UL << 5)
 #define USER_LED_PIN	PIN5
 
-#define COUNT_SIZE		(200000)
+#define COUNT_SIZE		(150000)
+
+void blink_odr(int count_size_1, int count_size_2) {
+	REG_GPIOA_ODR ^= USER_LED_PIN;
+	for (int i = 0; i < count_size_1; i++);
+	REG_GPIOA_ODR ^= USER_LED_PIN;
+	for (int i = 0; i < count_size_2; i++);
+}
 
 int main(void) {
     // 1. enable clock access to GPIO A
@@ -63,17 +70,19 @@ int main(void) {
 	// 3. inside loop, toggle LED pin
 
 	while (1) {
-		for (int i = 0; i < 1*COUNT_SIZE; i++);
-		REG_GPIOA_ODR |= USER_LED_PIN;
-		for (int i = 0; i < 6*COUNT_SIZE; i++);
-		REG_GPIOA_ODR &= ~(USER_LED_PIN);
-		for (int i = 0; i < 5*COUNT_SIZE; i++);
-		REG_GPIOA_ODR |= USER_LED_PIN;
-		for (int i = 0; i < 4*COUNT_SIZE; i++);
-		REG_GPIOA_ODR &= ~(USER_LED_PIN);
-		for (int i = 0; i < 3*COUNT_SIZE; i++);
-		REG_GPIOA_ODR |= USER_LED_PIN;
-		for (int i = 0; i < 2*COUNT_SIZE; i++);
-		REG_GPIOA_ODR &= ~(USER_LED_PIN);
+		for (int i = 0; i < 2; i++)
+			blink_odr(9*COUNT_SIZE, 9*COUNT_SIZE);
+
+		for (int i = 0; i < 6; i++)
+			blink_odr(3*COUNT_SIZE, 3*COUNT_SIZE);
+
+		for (int i = 0; i < 18; i++)
+			blink_odr(1*COUNT_SIZE, 1*COUNT_SIZE);
+
+		for (int i = 0; i < 6; i++)
+			blink_odr(3*COUNT_SIZE, 3*COUNT_SIZE);
+
+		for (int i = 0; i < 2; i++)
+			blink_odr(9*COUNT_SIZE, 9*COUNT_SIZE);
 	}
 }
