@@ -17,6 +17,8 @@
 
 // User LED: PA5, (port, pin) = (A, 5)
 
+#include <stdio.h>
+
 #define PERIPH_BASE 	(0x40000000UL)
 
 // AHB1 > GPIO A: 0x4002 0000 - 0x4002 03FF. width is 0x400 = 2^10
@@ -34,3 +36,11 @@
 
 #define GPIO_A_WIDTH	(0x400UL)
 #define RCC_WIDTH 		(0x400UL)
+
+int main(void) {
+    printf("PERIPH_BASE     = 0x%08lX\n", (unsigned long)PERIPH_BASE);
+    printf("AHB1_BASE       = 0x%08lX\n", (unsigned long)AHB1_BASE);
+    printf("GPIO_A_BASE     = 0x%08lX\n", (unsigned long)GPIO_A_BASE);
+    printf("RCC_AHB1_BASE   = 0x%08lX\n", (unsigned long)RCC_AHB1_BASE);
+    return 0;
+}
