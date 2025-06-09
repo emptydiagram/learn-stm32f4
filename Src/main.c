@@ -49,7 +49,7 @@
 #define PIN5 			(1UL << 5)
 #define USER_LED_PIN	PIN5
 
-#define COUNT_SIZE		(150000)
+#define COUNT_SIZE		(120000)
 
 void blink_odr(int count_size_1, int count_size_2) {
 	REG_GPIOA_ODR ^= USER_LED_PIN;
