@@ -11,10 +11,6 @@
 //}
 
 
-// where is LED connected?
-// TODO: look at nucleo board user guide
-
-
 // User LED: PA5, (port, pin) = (A, 5)
 
 #define PERIPH_BASE 	(0x40000000UL)
