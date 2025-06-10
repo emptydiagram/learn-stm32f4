@@ -17,15 +17,6 @@
 #define RCC_AHB1_OFF 	(0x3800UL)
 #define RCC_BASE 		(AHB1_BASE + RCC_AHB1_OFF)
 
-#define GPIOA_MODER_OFF (0x0UL)
-#define REG_GPIOA_MODER	(* (volatile unsigned int *) (GPIOA_BASE + GPIOA_MODER_OFF))
-
-#define GPIOA_ODR_OFF 	(0x14UL)
-#define REG_GPIOA_ODR	(* (volatile unsigned int *) (GPIOA_BASE + GPIOA_ODR_OFF))
-
-#define RCC_AHB1ENR_OFF (0x30UL)
-#define REG_RCC_AHB1ENR (* (volatile unsigned int *) (RCC_BASE + RCC_AHB1ENR_OFF))
-
 //// Masks
 // mask for bit 0 of RCC_AHB1ENR register
 #define GPIOAEN 		(1UL << 0)
@@ -59,22 +50,17 @@ typedef struct {
 #define GPIOA ((GPIO_TypeDef*) GPIOA_BASE)
 
 void blink_odr(int count_size_1, int count_size_2) {
-	//REG_GPIOA_ODR ^= USER_LED_PIN;
 	GPIOA->ODR ^= USER_LED_PIN;
 	for (int i = 0; i < count_size_1; i++);
-	//REG_GPIOA_ODR ^= USER_LED_PIN;
 	GPIOA->ODR ^= USER_LED_PIN;
 	for (int i = 0; i < count_size_2; i++);
 }
 
 int main(void) {
     // 1. enable clock access to GPIO A
-	//REG_RCC_AHB1ENR |= GPIOAEN;
 	RCC->AHB1ENR |= GPIOAEN;
 
 	// 2. set PA5 as output pin
-	//REG_GPIOA_MODER |= (1UL<<10);
-	//REG_GPIOA_MODER &= ~(1UL<<11);
 	GPIOA->MODER |= (1UL<<10);
 	GPIOA->MODER &= ~(1UL<<11);
 
