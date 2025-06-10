@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include "stm32f4xx.h"
 
 // User LED: PA5, (port, pin) = (A, 5)
@@ -15,16 +16,24 @@
 #define PIN13              (1UL << 13)
 #define USER_LED_PIN       PIN5
 #define USER_BTN_PIN       PIN13
+#define LED_ON()           (GPIOA->BSRR = USER_LED_PIN)
+#define LED_OFF()          (GPIOA->BSRR = USER_LED_PIN << 16)
+#define LED_TOGGLE()       (GPIOA->ODR ^= USER_LED_PIN)
 
 #define COUNT_SIZE         (80000)
 #define FIB_BLINK_COUNT    (230000)
 #define FIB_PAUSE_COUNT    (5*FIB_BLINK_COUNT)
 
+#define ACTIONS_PER_PERIOD  (16)
+
 #define    __IO            volatile
 
+static inline bool user_btn_pressed(void) {
+    return (GPIOC->IDR & USER_BTN_PIN) == 0;
+}
 
 void toggle_odr_spin(int spin_count) {
-    GPIOA->ODR ^= USER_LED_PIN;
+    LED_TOGGLE();
     for (int i = 0; i < spin_count; i++);
 }
 
@@ -34,9 +43,9 @@ void blink_odr_spin(int spin_count_1, int spin_count_2) {
 }
 
 void blink_bsrr_spin(int spin_count_1, int spin_count_2) {
-    GPIOA->BSRR = USER_LED_PIN;
+    LED_ON();
     for (int i = 0; i < spin_count_1; i++);
-    GPIOA->BSRR = (1UL << (16 + 5));
+    LED_OFF();
     for (int i = 0; i < spin_count_2; i++);
 }
 
@@ -55,13 +64,27 @@ int main(void) {
 
     // process input, produce output, etc.
     GPIOA->ODR &= ~(USER_LED_PIN);
+    int count = 0;
     while (1) {
-        if (GPIOC->IDR & USER_BTN_PIN) {
-            GPIOA->ODR ^= USER_LED_PIN;
+
+        if (user_btn_pressed()) {
+            LED_OFF();
             for (int i = 0; i < FIB_BLINK_COUNT; i++);
         } else {
-            GPIOA->BSRR = (1UL << (16 + 5));
-            for (int i = 0; i < FIB_BLINK_COUNT; i++);
+            // TODO: Fibonacci blink
+            if (count < ACTIONS_PER_PERIOD) {
+                LED_TOGGLE();
+                for (int i = 0; i < 2 * FIB_BLINK_COUNT; i++);
+            } else if (count < 2 * ACTIONS_PER_PERIOD) {
+                LED_TOGGLE();
+                for (int i = 0; i < FIB_BLINK_COUNT; i++);
+                LED_TOGGLE();
+                for (int i = 0; i < FIB_BLINK_COUNT; i++);
+            }
+            count += 1;
+            if (count >= 2 * ACTIONS_PER_PERIOD) {
+                count = 0;
+            }
         }
     }
 }
