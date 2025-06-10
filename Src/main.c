@@ -59,9 +59,11 @@ typedef struct {
 #define GPIOA ((GPIO_TypeDef*) GPIOA_BASE)
 
 void blink_odr(int count_size_1, int count_size_2) {
-	REG_GPIOA_ODR ^= USER_LED_PIN;
+	//REG_GPIOA_ODR ^= USER_LED_PIN;
+	GPIOA->ODR ^= USER_LED_PIN;
 	for (int i = 0; i < count_size_1; i++);
-	REG_GPIOA_ODR ^= USER_LED_PIN;
+	//REG_GPIOA_ODR ^= USER_LED_PIN;
+	GPIOA->ODR ^= USER_LED_PIN;
 	for (int i = 0; i < count_size_2; i++);
 }
 
