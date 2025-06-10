@@ -13,7 +13,7 @@
 #define USER_LED_PIN       PIN5
 
 #define COUNT_SIZE         (80000)
-#define FIB_BLINK_COUNT    (200000)
+#define FIB_BLINK_COUNT    (230000)
 #define FIB_PAUSE_COUNT    (5*FIB_BLINK_COUNT)
 
 #define    __IO            volatile
@@ -22,6 +22,11 @@
 void toggle_odr_spin(int spin_count) {
     GPIOA->ODR ^= USER_LED_PIN;
     for (int i = 0; i < spin_count; i++);
+}
+
+void blink_odr_spin(int spin_count_1, int spin_count_2) {
+	toggle_odr_spin(spin_count_1);
+	toggle_odr_spin(spin_count_2);
 }
 
 int main(void) {
@@ -52,8 +57,10 @@ int main(void) {
 
         for (size_t i = 0; i < len; i++) {
             for (int j = 0; j < FIB_PAUSE_COUNT; j++);
-            for (int j = 0; j < 2 * fib_seq[i]; j++)
-                toggle_odr_spin(FIB_BLINK_COUNT);
+            // for (int j = 0; j < 2 * fib_seq[i]; j++)
+            //     toggle_odr_spin(FIB_BLINK_COUNT);
+            for (int j = 0; j < fib_seq[i]; j++)
+                blink_odr_spin(FIB_BLINK_COUNT, FIB_BLINK_COUNT);
         }
     }
 }
