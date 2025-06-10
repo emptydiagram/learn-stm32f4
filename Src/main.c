@@ -1,15 +1,4 @@
-//#include <stdint.h>
-//
-//#if !defined(__SOFT_FP__) && defined(__ARM_FP)
-//  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-//#endif
-//
-//int main(void)
-//{
-//    /* Loop forever */
-//	for(;;);
-//}
-
+#include <stdint.h>
 
 // User LED: PA5, (port, pin) = (A, 5)
 
@@ -45,7 +34,29 @@
 #define PIN5 			(1UL << 5)
 #define USER_LED_PIN	PIN5
 
-#define COUNT_SIZE		(120000)
+#define COUNT_SIZE		(100000)
+
+#define __IO	volatile
+
+typedef struct {
+	__IO uint32_t MODER;
+	__IO uint32_t OTYPER;
+	__IO uint32_t OSPEEDR;
+	__IO uint32_t PUPDR;
+	__IO uint32_t IDR;
+	__IO uint32_t ODR;
+	__IO uint32_t BSRR;
+	__IO uint32_t LCKR;
+	__IO uint32_t AFR[2];
+} GPIO_TypeDef;
+
+typedef struct {
+	uint32_t DUMMY[12];
+	__IO uint32_t AHB1ENR;
+} RCC_TypeDef;
+
+#define RCC ((RCC_TypeDef*) RCC_BASE)
+#define GPIOA ((GPIO_TypeDef*) GPIOA_BASE)
 
 void blink_odr(int count_size_1, int count_size_2) {
 	REG_GPIOA_ODR ^= USER_LED_PIN;
@@ -56,12 +67,14 @@ void blink_odr(int count_size_1, int count_size_2) {
 
 int main(void) {
     // 1. enable clock access to GPIO A
-	//  - MODER,
-	REG_RCC_AHB1ENR |= GPIOAEN;
+	//REG_RCC_AHB1ENR |= GPIOAEN;
+	RCC->AHB1ENR |= GPIOAEN;
 
 	// 2. set PA5 as output pin
-	REG_GPIOA_MODER |= (1UL<<10);
-	REG_GPIOA_MODER &= ~(1UL<<11);
+	//REG_GPIOA_MODER |= (1UL<<10);
+	//REG_GPIOA_MODER &= ~(1UL<<11);
+	GPIOA->MODER |= (1UL<<10);
+	GPIOA->MODER &= ~(1UL<<11);
 
 	// 3. inside loop, toggle LED pin
 
