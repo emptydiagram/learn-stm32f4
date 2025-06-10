@@ -2,32 +2,32 @@
 
 // User LED: PA5, (port, pin) = (A, 5)
 
-#define PERIPH_BASE 	(0x40000000UL)
+#define PERIPH_BASE        (0x40000000UL)
 
-// AHB1 > GPIO A: 0x4002 0000 - 0x4002 03FF. width is 0x400 = 2^10
-#define AHB1_OFF 		(0x20000UL)
-#define AHB1_BASE 		(PERIPH_BASE + AHB1_OFF)
+// AHB1 → GPIO A: 0x40020000 - 0x400203FF. width is 0x400 = 2^10
+#define AHB1_OFF           (0x20000UL)
+#define AHB1_BASE          (PERIPH_BASE + AHB1_OFF)
 
 // GPIOA = AHB1 start
-#define GPIO_A_AHB1_OFF	 (0x0UL)
-#define GPIOA_BASE		 (AHB1_BASE + GPIO_A_AHB1_OFF)
+#define GPIO_A_AHB1_OFF    (0x0UL)
+#define GPIOA_BASE         (AHB1_BASE + GPIO_A_AHB1_OFF)
 
-// RCC: 0x4002 3800 - 0x4002 3BFF
+// RCC: 0x40023800 - 0x40023BFF
 // 0x3C00 - 0x3800 = 0x400
-#define RCC_AHB1_OFF 	(0x3800UL)
-#define RCC_BASE 		(AHB1_BASE + RCC_AHB1_OFF)
+#define RCC_AHB1_OFF       (0x3800UL)
+#define RCC_BASE           (AHB1_BASE + RCC_AHB1_OFF)
 
 //// Masks
 // mask for bit 0 of RCC_AHB1ENR register
-#define GPIOAEN 		(1UL << 0)
+#define GPIOAEN            (1UL << 0)
 
 // the User LED I/O pin is GPIO PA5
-#define PIN5 			(1UL << 5)
-#define USER_LED_PIN	PIN5
+#define PIN5               (1UL << 5)
+#define USER_LED_PIN       PIN5
 
-#define COUNT_SIZE		(100000)
+#define COUNT_SIZE         (90000)
 
-#define __IO	volatile
+#define	__IO	           volatile
 
 typedef struct {
 	__IO uint32_t MODER;
