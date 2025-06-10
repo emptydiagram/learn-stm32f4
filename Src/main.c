@@ -20,9 +20,7 @@
 #define LED_OFF()          (GPIOA->BSRR = USER_LED_PIN << 16)
 #define LED_TOGGLE()       (GPIOA->ODR ^= USER_LED_PIN)
 
-#define COUNT_SIZE         (80000)
-#define FIB_BLINK_COUNT    (230000)
-#define FIB_PAUSE_COUNT    (5*FIB_BLINK_COUNT)
+#define BLINK_COUNT    (240000)
 
 #define ACTIONS_PER_PERIOD  (16)
 
@@ -69,17 +67,17 @@ int main(void) {
 
         if (user_btn_pressed()) {
             LED_OFF();
-            for (int i = 0; i < FIB_BLINK_COUNT; i++);
+            for (int i = 0; i < BLINK_COUNT; i++);
         } else {
             // TODO: Fibonacci blink
             if (count < ACTIONS_PER_PERIOD) {
                 LED_TOGGLE();
-                for (int i = 0; i < 2 * FIB_BLINK_COUNT; i++);
+                for (int i = 0; i < 2 * BLINK_COUNT; i++);
             } else if (count < 2 * ACTIONS_PER_PERIOD) {
                 LED_TOGGLE();
-                for (int i = 0; i < FIB_BLINK_COUNT; i++);
+                for (int i = 0; i < BLINK_COUNT; i++);
                 LED_TOGGLE();
-                for (int i = 0; i < FIB_BLINK_COUNT; i++);
+                for (int i = 0; i < BLINK_COUNT; i++);
             }
             count += 1;
             if (count >= 2 * ACTIONS_PER_PERIOD) {
