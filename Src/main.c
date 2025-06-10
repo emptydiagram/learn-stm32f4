@@ -25,7 +25,7 @@
 #define PIN5               (1UL << 5)
 #define USER_LED_PIN       PIN5
 
-#define COUNT_SIZE         (90000)
+#define COUNT_SIZE         (80000)
 
 #define	__IO	           volatile
 
@@ -49,11 +49,9 @@ typedef struct {
 #define RCC ((RCC_TypeDef*) RCC_BASE)
 #define GPIOA ((GPIO_TypeDef*) GPIOA_BASE)
 
-void blink_odr(int count_size_1, int count_size_2) {
+void toggle_odr_spin(int spin_count) {
 	GPIOA->ODR ^= USER_LED_PIN;
-	for (int i = 0; i < count_size_1; i++);
-	GPIOA->ODR ^= USER_LED_PIN;
-	for (int i = 0; i < count_size_2; i++);
+	for (int i = 0; i < spin_count; i++);
 }
 
 int main(void) {
@@ -67,19 +65,19 @@ int main(void) {
 	// 3. inside loop, toggle LED pin
 
 	while (1) {
-		for (int i = 0; i < 2; i++)
-			blink_odr(9*COUNT_SIZE, 9*COUNT_SIZE);
+		for (int i = 0; i < 4; i++)
+			toggle_odr_spin(9*COUNT_SIZE);
 
-		for (int i = 0; i < 6; i++)
-			blink_odr(3*COUNT_SIZE, 3*COUNT_SIZE);
+		for (int i = 0; i < 12; i++)
+			toggle_odr_spin(3*COUNT_SIZE);
 
-		for (int i = 0; i < 18; i++)
-			blink_odr(1*COUNT_SIZE, 1*COUNT_SIZE);
+		for (int i = 0; i < 36; i++)
+			toggle_odr_spin(1*COUNT_SIZE);
 
-		for (int i = 0; i < 6; i++)
-			blink_odr(3*COUNT_SIZE, 3*COUNT_SIZE);
+		for (int i = 0; i < 12; i++)
+			toggle_odr_spin(3*COUNT_SIZE);
 
-		for (int i = 0; i < 2; i++)
-			blink_odr(9*COUNT_SIZE, 9*COUNT_SIZE);
+		for (int i = 0; i < 4; i++)
+			toggle_odr_spin(9*COUNT_SIZE);
 	}
 }
