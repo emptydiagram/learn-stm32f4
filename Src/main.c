@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 
 // User LED: PA5, (port, pin) = (A, 5)
 
@@ -26,58 +27,66 @@
 #define USER_LED_PIN       PIN5
 
 #define COUNT_SIZE         (80000)
+#define FIB_BLINK_COUNT    (250000)
+#define FIB_PAUSE_COUNT    (5*FIB_BLINK_COUNT)
 
-#define	__IO	           volatile
+#define    __IO            volatile
 
 typedef struct {
-	__IO uint32_t MODER;
-	__IO uint32_t OTYPER;
-	__IO uint32_t OSPEEDR;
-	__IO uint32_t PUPDR;
-	__IO uint32_t IDR;
-	__IO uint32_t ODR;
-	__IO uint32_t BSRR;
-	__IO uint32_t LCKR;
-	__IO uint32_t AFR[2];
+    __IO uint32_t MODER;
+    __IO uint32_t OTYPER;
+    __IO uint32_t OSPEEDR;
+    __IO uint32_t PUPDR;
+    __IO uint32_t IDR;
+    __IO uint32_t ODR;
+    __IO uint32_t BSRR;
+    __IO uint32_t LCKR;
+    __IO uint32_t AFR[2];
 } GPIO_TypeDef;
 
 typedef struct {
-	uint32_t DUMMY[12];
-	__IO uint32_t AHB1ENR;
+    uint32_t DUMMY[12];
+    __IO uint32_t AHB1ENR;
 } RCC_TypeDef;
 
 #define RCC ((RCC_TypeDef*) RCC_BASE)
 #define GPIOA ((GPIO_TypeDef*) GPIOA_BASE)
 
 void toggle_odr_spin(int spin_count) {
-	GPIOA->ODR ^= USER_LED_PIN;
-	for (int i = 0; i < spin_count; i++);
+    GPIOA->ODR ^= USER_LED_PIN;
+    for (int i = 0; i < spin_count; i++);
 }
 
 int main(void) {
     // 1. enable clock access to GPIO A
-	RCC->AHB1ENR |= GPIOAEN;
+    RCC->AHB1ENR |= GPIOAEN;
 
-	// 2. set PA5 as output pin
-	GPIOA->MODER |= (1UL<<10);
-	GPIOA->MODER &= ~(1UL<<11);
+    // 2. set PA5 as output pin
+    GPIOA->MODER |= (1UL<<10);
+    GPIOA->MODER &= ~(1UL<<11);
 
-	// 3. inside loop, toggle LED pin
+    // 3. inside loop, toggle LED pin
 
-	while (1) {
-		for (int i = 0; i < 4; i++)
-			toggle_odr_spin(9*COUNT_SIZE);
+    GPIOA->ODR &= ~(USER_LED_PIN);
+    while (1) {
+        // for (int i = 0; i < 4; i++)
+        //     toggle_odr_spin(9*COUNT_SIZE);
+        // for (int i = 0; i < 12; i++)
+        //     toggle_odr_spin(3*COUNT_SIZE);
+        // for (int i = 0; i < 36; i++)
+        //     toggle_odr_spin(1*COUNT_SIZE);
+        // for (int i = 0; i < 12; i++)
+        //     toggle_odr_spin(3*COUNT_SIZE);
+        // for (int i = 0; i < 4; i++)
+        //     toggle_odr_spin(9*COUNT_SIZE);
 
-		for (int i = 0; i < 12; i++)
-			toggle_odr_spin(3*COUNT_SIZE);
+        int fib_seq[] = {0, 1, 1, 2, 3, 5, 8, 13};
+        size_t len = sizeof(fib_seq) / sizeof(fib_seq[0]);
 
-		for (int i = 0; i < 36; i++)
-			toggle_odr_spin(1*COUNT_SIZE);
-
-		for (int i = 0; i < 12; i++)
-			toggle_odr_spin(3*COUNT_SIZE);
-
-		for (int i = 0; i < 4; i++)
-			toggle_odr_spin(9*COUNT_SIZE);
-	}
+        for (size_t i = 0; i < len; i++) {
+            for (int j = 0; j < FIB_PAUSE_COUNT; j++);
+            for (int j = 0; j < 2 * fib_seq[i]; j++)
+                toggle_odr_spin(FIB_BLINK_COUNT);
+        }
+    }
 }
