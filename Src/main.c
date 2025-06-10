@@ -29,6 +29,13 @@ void blink_odr_spin(int spin_count_1, int spin_count_2) {
 	toggle_odr_spin(spin_count_2);
 }
 
+void blink_bsrr_spin(int spin_count_1, int spin_count_2) {
+	GPIOA->BSRR = USER_LED_PIN;
+	for (int i = 0; i < spin_count_1; i++);
+	GPIOA->BSRR = (1UL << (16 + 5));
+	for (int i = 0; i < spin_count_2; i++);
+}
+
 int main(void) {
     // 1. enable clock access to GPIO A
     RCC->AHB1ENR |= GPIOAEN;
@@ -60,7 +67,7 @@ int main(void) {
             // for (int j = 0; j < 2 * fib_seq[i]; j++)
             //     toggle_odr_spin(FIB_BLINK_COUNT);
             for (int j = 0; j < fib_seq[i]; j++)
-                blink_odr_spin(FIB_BLINK_COUNT, FIB_BLINK_COUNT);
+                blink_bsrr_spin(FIB_BLINK_COUNT, FIB_BLINK_COUNT);
         }
     }
 }
