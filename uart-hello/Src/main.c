@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 #include "stm32f4xx.h"
 
 #define GPIOAEN            (1U << 0)
@@ -18,19 +19,26 @@ static void usart_set_baudrate(USART_TypeDef *usartx, uint32_t periph_clk, uint3
 static uint16_t compute_uart_bd(uint32_t periph_clk, uint32_t baud_rate);
 void usart2_write(int ch);
 
+// somehow this retargets printf
+int __io_putchar(int ch) {
+	usart2_write(ch);
+	return ch;
+}
+
 int main(void)
 {
 
 	usart2_tx_init();
 
-    int chars1[] = {'H','E','L','L','O',' ','W','O','R','L','D', ' '};
-    int chars_len = sizeof(chars) / sizeof(chars[0]);
-    int char_idx = 0;
+	char* strs[] = {"HELLO ", "W", "O", "R", "L", "D", " "};
+	int strs_len = sizeof(strs) / sizeof(strs[0]);
+	int str_idx = 0;
 	while(1) {
-		int count_multiples = (char_idx / 6 < 1) ? 1 : 5;
-		usart2_write(chars[char_idx]);
-		for (int i = 0; i < (count_multiples * 100000); i++);
-		char_idx = (char_idx + 1) % chars_len;
+		printf(strs[str_idx]);
+		fflush(stdout);
+		int count_multiple = ( str_idx == 0) ? 2 : 5;
+		for (int i = 0; i < (count_multiple * 100000); i++);
+		str_idx = (str_idx + 1) % strs_len;
 	}
 }
 
