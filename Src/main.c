@@ -6,8 +6,7 @@
 // User LED: PA5, (port, pin) = (A, 5)
 // User Push Button: B1, connected to I/O pin PC13: (port, pin) = (C, 13)
 
-//// Masks
-// mask for bit 0 of RCC_AHB1ENR register
+// Masks for bits of RCC_AHB1ENR register
 #define GPIOAEN            (1UL << 0)
 #define GPIOCEN            (1UL << 2)
 
