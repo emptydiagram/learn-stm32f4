@@ -20,6 +20,7 @@
 #define LED_TOGGLE()       (GPIOA->ODR ^= USER_LED_PIN)
 
 #define BLINK_COUNT    (240000)
+//#define FIB_PAUSE_COUNT    (5*BLINK_COUNT)
 
 #define ACTIONS_PER_PERIOD  (16)
 
@@ -63,6 +64,15 @@ int main(void) {
     GPIOA->ODR &= ~(USER_LED_PIN);
     int count = 0;
     while (1) {
+//        int fib_seq[] = {0, 1, 1, 2, 3, 5, 8, 13};
+//        size_t len = sizeof(fib_seq) / sizeof(fib_seq[0]);
+//        for (size_t i = 0; i < len; i++) {
+//              for (int j = 0; j < FIB_PAUSE_COUNT; j++);
+//              // for (int j = 0; j < 2 * fib_seq[i]; j++)
+//              //     toggle_odr_spin(BLINK_COUNT);
+//              for (int j = 0; j < fib_seq[i]; j++)
+//                    blink_bsrr_spin(BLINK_COUNT, BLINK_COUNT);
+//        }
 
         if (user_btn_pressed()) {
             LED_OFF();
