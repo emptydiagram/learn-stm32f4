@@ -13,7 +13,6 @@
 
 #define USART_BAUDRATE     115200
 
-void usart2_tx_init();
 static void usart_set_baudrate(USART_TypeDef *usartx, uint32_t periph_clk, uint32_t baud_rate);
 static uint16_t compute_uart_bd(uint32_t periph_clk, uint32_t baud_rate);
 void usart2_write(int ch);
