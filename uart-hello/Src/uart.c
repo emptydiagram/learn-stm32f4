@@ -33,13 +33,21 @@ void usart2_tx_init() {
 	 */
 	RCC->AHB1ENR |= GPIOAEN;
 
-	// set MODER2 on GPIOA (PA2) to (b4 = 0, b5 = 1)
+	// TX: set MODER2 on GPIOA (PA2) to (b4 = 0, b5 = 1)
 	GPIOA->MODER &= ~(1U << 4);
 	GPIOA->MODER |= (1U << 5);
 
-	// set bits 8-11 to 0b0111
+	// RX: set MODER3 on GPIOA for PA3 to alt fn mode, b[7:6] = [1, 0]
+	GPIOA->MODER &= ~(1U << 6);
+	GPIOA->MODER |= (1U << 7);
+
+	// set bits b[11..8] to 0b0111 (TX, AF7)
 	GPIOA->AFR[0] |= (7U << 8);
 	GPIOA->AFR[0] &= ~(1U << 11);
+
+	// set bits b[15..12] to 0b0111 (RX, AF7)
+	GPIOA->AFR[0] |= (7U << 12);
+	GPIOA->AFR[0] &= ~(1U << 15);
 
 
 	/*
@@ -55,8 +63,7 @@ void usart2_tx_init() {
 	usart_set_baudrate(USART2, APB1_CLK, USART_BAUDRATE);
 
 	// not logical OR, "want to clean" the CR1
-	USART2->CR1 = USART_CR1_TE;
-
+	USART2->CR1 = USART_CR1_TE | USART_CR1_RE;
 	USART2->CR1 |= USART_CR1_UE;
 }
 
@@ -67,6 +74,13 @@ static void usart_set_baudrate(USART_TypeDef *usartx, uint32_t periph_clk, uint3
 static uint16_t compute_uart_bd(uint32_t periph_clk, uint32_t baud_rate) {
 	// "empirically derived" formula from Video 15 ~16:40, of "Embedded Systems Bare-Metal Programming Ground Up™ (STM32)"
 	return (periph_clk + (baud_rate / 2U)) / baud_rate;
+}
+
+char usart2_read(void) {
+	// ensure receive data register is not empty
+	while (!(USART2->SR & USART_SR_RXNE));
+
+	return USART2->DR;
 }
 
 void usart2_write(int ch) {
